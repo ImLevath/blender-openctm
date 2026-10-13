@@ -16,13 +16,40 @@ Supported versions: **4.2 LTS**, **3.6 LTS** (**Windows**, **macOS**)
 - Normals
 - Color Data (attributemap with name 'Color' with data RGBA)
 
-## Install
-- Blender > Edit > Preferences > Add-Ons > Install from disk > .zip file
+## Download
+
+- Get the latest installable package from [GitHub Releases](https://github.com/RealIndrit/blender-openctm/releases/latest).
+- For Blender **4.2+** use `openctm_ctm-extension-...zip`.
+- For Blender **3.6 LTS** use `openctm_ctm-addon-...zip`.
+
+## Installation tutorial
+
+### Blender 4.2+ (Extensions system)
+1. Open Blender.
+2. Go to **Edit > Preferences > Get Extensions**.
+3. Open the menu in the top-right and click **Install from Disk...**.
+4. Select `openctm_ctm-extension-...zip`.
+5. Enable **OpenCTM (.ctm)** if it is not enabled automatically.
+
+### Blender 3.6 LTS (legacy add-on system)
+1. Open Blender.
+2. Go to **Edit > Preferences > Add-ons**.
+3. Click **Install...** and select `openctm_ctm-addon-...zip`.
+4. Enable **OpenCTM (.ctm)** in the add-on list.
+
+### macOS OpenCTM library setup
+This add-on needs the OpenCTM dynamic library (`libopenctm.dylib`) at runtime.
+
+1. Install OpenCTM (example with Homebrew):
+   ```bash
+   brew install openctm
+   ```
+2. If Blender still cannot find the library, set `OPENCTM_LIB_PATH` to the installed file path (for example `/opt/homebrew/lib/libopenctm.dylib`) before launching Blender.
 
 ## Usage
 
-- Download from the release tags here on [GitHub](https://github.com/RealIndrit/blender-openctm/releases/latest)
-- To import: File > Import > OpenCTM (.ctm)
+- To import: **File > Import > OpenCTM (.ctm)**
+- To export: **File > Export > OpenCTM (.ctm)**
 
 
 ## Showcase
@@ -49,6 +76,10 @@ build-script.bat
 
 It will give 2 zip files, one for addon (3.6), the other is the extensions system (4.2)
 
+Automated release builds:
+- Pushing a `v*` tag triggers `.github/workflows/release.yml`.
+- The workflow publishes both installable zip files to the GitHub Release assets.
+
 Install dev build:
 * Blender > Edit > Preferences > Add-Ons > Install from disk > .zip file (4.2 extension zip file)
 * Blender > Edit > Preferences > Add-ons > Install > .zip file ( 3.6 addon zipfile)
@@ -62,7 +93,7 @@ or compile [source](https://github.com/Danny02/OpenCTM) yourself
 On macOS, provide a compatible OpenCTM dynamic library (`libopenctm.dylib`) either:
 - in `src/openctm/libs/`, or
 - through `OPENCTM_LIB_PATH`, or
-- as a system library discoverable by `ctypes`.
+- as a system library (Homebrew/MacPorts paths are auto-detected when available).
 
 # Credits
 
