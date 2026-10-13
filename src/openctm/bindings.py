@@ -1,6 +1,7 @@
 import os
 import sys
 import ctypes
+import glob
 from ctypes import *
 from ctypes.util import find_library
 
@@ -98,22 +99,41 @@ def _load_openctm_library():
     libs_dir = os.path.join(os.path.dirname(__file__), 'libs')
     load_attempts = []
     candidates = []
+    seen = set()
+
+    def add_candidate(path):
+        if not path:
+            return
+        if path in seen:
+            return
+        seen.add(path)
+        candidates.append(path)
 
     env_path = os.environ.get("OPENCTM_LIB_PATH")
     if env_path:
-        candidates.append(env_path)
+        add_candidate(env_path)
 
     if sys.platform.startswith('win32'):
-        candidates.append(os.path.join(libs_dir, 'openctm.dll'))
+        add_candidate(os.path.join(libs_dir, 'openctm.dll'))
     elif sys.platform == 'darwin':
-        candidates.extend([
+        for path in (
             os.path.join(libs_dir, 'libopenctm.dylib'),
             os.path.join(libs_dir, 'openctm.dylib'),
-        ])
-        for name in ("openctm", "libopenctm"):
+        ):
+            add_candidate(path)
+
+        for path in sorted(glob.glob(os.path.join(libs_dir, "libopenctm*.dylib"))):
+            add_candidate(path)
+
+        for name in ("openctm", "libopenctm", "OpenCTM", "ctm"):
             resolved = find_library(name)
             if resolved:
-                candidates.append(resolved)
+                add_candidate(resolved)
+
+        for lib_dir in ("/opt/homebrew/lib", "/usr/local/lib", "/opt/local/lib"):
+            for pattern in ("libopenctm.dylib", "libopenctm*.dylib"):
+                for path in sorted(glob.glob(os.path.join(lib_dir, pattern))):
+                    add_candidate(path)
     else:
         raise NotImplementedError(sys.platform)
 
