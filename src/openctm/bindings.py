@@ -2,6 +2,7 @@ import os
 import sys
 import ctypes
 from ctypes import *
+from ctypes.util import find_library
 
 # ------------------------------------------------------------------------------
 # Product:     OpenCTM
@@ -93,12 +94,44 @@ CTM_ATTRIB_MAP_6 = 0x0805
 CTM_ATTRIB_MAP_7 = 0x0806
 CTM_ATTRIB_MAP_8 = 0x0807
 
-if sys.platform.startswith('win32'):
-    _lib = os.path.join(os.path.dirname(__file__), 'libs', 'openctm.dll')
-else:
-    raise NotImplementedError(sys.platform)
+def _load_openctm_library():
+    libs_dir = os.path.join(os.path.dirname(__file__), 'libs')
+    load_attempts = []
+    candidates = []
 
-_lib = ctypes.CDLL(_lib)
+    env_path = os.environ.get("OPENCTM_LIB_PATH")
+    if env_path:
+        candidates.append(env_path)
+
+    if sys.platform.startswith('win32'):
+        candidates.append(os.path.join(libs_dir, 'openctm.dll'))
+    elif sys.platform == 'darwin':
+        candidates.extend([
+            os.path.join(libs_dir, 'libopenctm.dylib'),
+            os.path.join(libs_dir, 'openctm.dylib'),
+        ])
+        for name in ("openctm", "libopenctm"):
+            resolved = find_library(name)
+            if resolved:
+                candidates.append(resolved)
+    else:
+        raise NotImplementedError(sys.platform)
+
+    for candidate in candidates:
+        load_attempts.append(candidate)
+        try:
+            return ctypes.CDLL(candidate)
+        except OSError:
+            continue
+
+    attempted = "\n - ".join(load_attempts) if load_attempts else "(none)"
+    raise OSError(
+        f"Failed to load OpenCTM library for platform '{sys.platform}'. Tried:\n - {attempted}\n"
+        "Set OPENCTM_LIB_PATH or place the platform library in openctm/libs."
+    )
+
+
+_lib = _load_openctm_library()
 
 # Functions
 ctmNewContext = _lib.ctmNewContext

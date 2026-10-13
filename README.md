@@ -3,7 +3,7 @@ OpenCTM (.ctm) Blender
 
 This Blender plugin (add-on) allows you to import/export files in OpenCTM file format.
 
-Supported versions: **4.2 LTS**, **3.6 LTS** (Windows only atm)
+Supported versions: **4.2 LTS**, **3.6 LTS** (**Windows**, **macOS**)
 
 ## What it imports:
 - Meshdata
@@ -58,6 +58,11 @@ Install dev build:
 Plugin prepackages OpenCTM.dll (df04ff1b749e0c66ad72882cc9bccf01 MD5) lib. If you do not trust this file (it is unmodified).
 You are free to get your own at [sourceforge](https://sourceforge.net/projects/openctm/)
 or compile [source](https://github.com/Danny02/OpenCTM) yourself
+
+On macOS, provide a compatible OpenCTM dynamic library (`libopenctm.dylib`) either:
+- in `src/openctm/libs/`, or
+- through `OPENCTM_LIB_PATH`, or
+- as a system library discoverable by `ctypes`.
 
 # Credits
 
