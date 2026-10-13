@@ -40,22 +40,11 @@ Supported versions: **4.2 LTS**, **3.6 LTS** (**Windows**, **macOS**)
 ### macOS OpenCTM library setup
 This add-on needs the OpenCTM dynamic library (`libopenctm.dylib`) at runtime.
 
-1. Install build tools with Homebrew:
+1. Install OpenCTM (example with Homebrew):
    ```bash
-   brew install cmake
+   brew install openctm
    ```
-2. Build OpenCTM and point Blender to the produced dylib:
-   ```bash
-   tmp_dir="$(mktemp -d)"
-   cd "$tmp_dir"
-   curl -L -o openctm.zip https://github.com/Danny02/OpenCTM/archive/refs/heads/master.zip
-   unzip openctm.zip
-   cd OpenCTM-master
-   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-   cmake --build build
-   export OPENCTM_LIB_PATH="$PWD/build/lib/libopenctm.dylib"
-   ```
-3. Launch Blender from the same terminal so `OPENCTM_LIB_PATH` is available.
+2. If Blender still cannot find the library, set `OPENCTM_LIB_PATH` to the installed file path (for example `/opt/homebrew/lib/libopenctm.dylib`) before launching Blender.
 
 ## Usage
 
