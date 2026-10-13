@@ -28,17 +28,6 @@ jobs:
           )
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Resolve release metadata
-        id: release_meta
-        run: |
-          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            TAG_NAME="${GITHUB_REF_NAME}"
-          else
-            TAG_NAME="pre-v${{ steps.version.outputs.version }}-${GITHUB_RUN_NUMBER}"
-          fi
-          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
-          echo "release_name=OpenCTM Blender v${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
-
       - name: Build release archives
         run: |
           mkdir -p dist
@@ -55,9 +44,6 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.release_meta.outputs.tag_name }}
-          name: ${{ steps.release_meta.outputs.release_name }}
-          prerelease: true
           files: |
             dist/openctm_ctm-addon-blender3.6-v${{ steps.version.outputs.version }}.zip
             dist/openctm_ctm-extension-blender4.2-v${{ steps.version.outputs.version }}.zip
